@@ -1,21 +1,48 @@
-import Triangle from './triangle.js';
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './css/styles.css';
-
-function handleTriangleForm(event) {
-  event.preventDefault();
-  document.querySelector('#response').innerText = null;
-  const length2 = parseInt(document.querySelector('#length2').value);
-  const length1 = parseInt(document.querySelector('#length1').value);
-  const length3 = parseInt(document.querySelector('#length3').value);
-  const triangle = new Triangle(length1, length2, length3);
-  const response = triangle.checkType();
-  const pTag = document.createElement("p");
-  pTag.append(response);
-  document.querySelector('#response').append(pTag);
+const storeState = () => {  // store current stte of the object
+  let currentState = {};  //current state will be mutated
+  return (stateChangeFunction = state => state) => {
+    const newState = stateChangeFunction(currentState); //this takes a given function and calls it on the currentState, saves that as a newState
+    currentState = {...newState};  // this assigns the newState as the currentState
+    return newState;  // this provides a snapshot of the current state
+  }
 }
 
-window.addEventListener("load", function() {
-  document.querySelector("#triangle-checker-form").addEventListener("submit", handleTriangleForm);
-});
+const stateControl = storeState();
+
+// this is a function factory
+// we can create more specific functions that alter our object's properties
+
+const changeState = (prop) => {
+  return (value) => {
+    return (state) => ({
+      ...state,
+      [prop] : (state[prop] || 0) + value  // idk about this one, I feel like we will use slightly different logic here but idr
+    });
+  }
+}
+
+// now we need to create more specific functions that use the function factory? >>>>> we can inport our functions from haiku.js probably
+// We could easily create many more.
+// const feed = changeState("soil")(1);
+// const blueFood = changeState("soil")(5);
+
+// const hydrate = changeState("water")(1);
+// const superWater = changeState("water")(5);
+
+window.onload = function() {
+  // this is where we will get input from the textbox in our html
+  // then update the output from the state
+  
+
+
+  // This function doesn't actually do anything useful in this application 
+  // — it just demonstrates how we can "look" at the current state 
+  // (which the DOM is holding anyway). 
+  // However, students often do need the ability to see the current state 
+  // without changing it so it's included here for reference.
+  document.getElementById('show-state').onclick = function() {
+    // We just need to call stateControl() without arguments 
+    // to see our current state.
+    const currentState = stateControl();
+  }
+}
